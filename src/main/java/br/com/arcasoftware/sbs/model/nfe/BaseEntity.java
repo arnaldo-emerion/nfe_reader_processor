@@ -14,4 +14,10 @@ public class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String userCreate;
+
+    public void setUserCreate(String userCreate) {
+        this.userCreate = userCreate;
+    }
 }

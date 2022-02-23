@@ -32,18 +32,20 @@ public class NFeBuilder {
     private final EmitenteService emitenteService;
     private final ProdutoService produtoService;
     private final TransportadoraService transportadoraService;
+    private final String userName;
 
     private NFe nfe;
     private List<Produto> allItemsForThisEmitente;
 
     public NFeBuilder(Document document, XPath xpath, DestinatarioService destinatarioService, EmitenteService emitenteService, ProdutoService produtoService,
-                      TransportadoraService transportadoraService) {
+                      TransportadoraService transportadoraService, String userName) {
         this.document = document;
         this.xpath = xpath;
         this.destinatarioService = destinatarioService;
         this.emitenteService = emitenteService;
         this.produtoService = produtoService;
         this.transportadoraService = transportadoraService;
+        this.userName = userName;
     }
 
     public NFeBuilder comNFe() {
@@ -77,6 +79,7 @@ public class NFeBuilder {
                 null,
                 null,
                 null,
+                null,
                 null
         );
 
@@ -106,6 +109,7 @@ public class NFeBuilder {
                     XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("xEnder"))
             );
 
+            transportadora.setUserCreate(userName);
             Transportadora savedTransportadora;
             try {
                 savedTransportadora = this.transportadoraService.save(transportadora);
@@ -147,7 +151,7 @@ public class NFeBuilder {
             );
 
             Emitente savedemitente;
-
+            emitente.setUserCreate(userName);
             try {
                 savedemitente = this.emitenteService.save(emitente);
             } catch (DataIntegrityViolationException ex) {
@@ -195,7 +199,7 @@ public class NFeBuilder {
             );
 
             Destinatario savedDestinatario;
-
+            destinatario.setUserCreate(userName);
             try {
                 savedDestinatario = this.destinatarioService.save(destinatario);
             } catch (DataIntegrityViolationException ex) {
@@ -237,6 +241,8 @@ public class NFeBuilder {
                 XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vTotTrib"))
 
         );
+
+        nFeTotalICMS.setUserCreate(userName);
         this.nfe.setNFeTotalICMS(nFeTotalICMS);
 
         return this;
@@ -268,7 +274,7 @@ public class NFeBuilder {
                     );
 
                     Produto savedProduto;
-
+                    produto.setUserCreate(userName);
                     try {
                         savedProduto = this.produtoService.save(produto);
                     } catch (DataIntegrityViolationException ex) {
@@ -285,7 +291,7 @@ public class NFeBuilder {
                         XMLUtils.extractDoubleValue(item.getElementsByTagName("qTrib")),
                         XMLUtils.extractDoubleValue(item.getElementsByTagName("vUnTrib")),
                         XMLUtils.extractDoubleValue(item.getElementsByTagName("vProd")));
-
+                nFeItem.setUserCreate(userName);
                 this.nfe.getNFeItemList().add(nFeItem);
             }
         }

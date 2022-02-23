@@ -55,4 +55,6 @@ public class NFe extends BaseEntity implements FiltravelPorEmitente {
     public String getEmitenteCNPJ() {
         return this.getEmitente().getCnpj();
     }
+
+    private String fileName;
 }

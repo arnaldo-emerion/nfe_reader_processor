@@ -23,7 +23,6 @@ public class UploadController {
         this.producer = producer;
     }
 
-    @PostMapping("processar")
     public ResponseEntity processarNFe(@RequestParam("file") MultipartFile file, @RequestParam("reprocessarNF") String reprocessarNF) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Message-Type", MessageType.ORDER.name());

@@ -44,12 +44,14 @@ public class NfeProcessor {
         this.historicoProcessamentoService = historicoProcessamentoService;
     }
 
-    public void processNFe(InputStream file, String fileName, boolean reprocessarNF) {
+    public void processNFe(InputStream file, String fileName, String userName) {
         NFe nfe;
         boolean processadaCorretamente = false;
         String motivo = null;
         try {
-            nfe = this.process(file, reprocessarNF);
+            nfe = this.process(file, userName);
+            nfe.setUserCreate(userName);
+            nfe.setFileName(fileName);
             this.nFeService.save(nfe);
             processadaCorretamente = true;
             motivo = "Nota fiscal processada corretamente";
@@ -62,7 +64,7 @@ public class NfeProcessor {
         }
     }
 
-    private NFe process(InputStream nfe, boolean reprocessarNF) {
+    private NFe process(InputStream nfe, String userName) {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 
         try {
@@ -100,13 +102,11 @@ public class NfeProcessor {
 
         List<NFe> byChNFe = this.nFeService.getByChaveNFe(chNFe);
 
-        if (!reprocessarNF && !byChNFe.isEmpty()) {
-            throw new ValidationException(EnumException.NFE_ALREADY_PROCESSED);
-        } else if (reprocessarNF && !byChNFe.isEmpty()) {
+        if (!byChNFe.isEmpty()) {
             this.nFeService.delete(byChNFe.get(0));
         }
 
-        return new NFeBuilder(document, xpath, destinatarioService, emitenteService, produtoService, transportadoraService)
+        return new NFeBuilder(document, xpath, destinatarioService, emitenteService, produtoService, transportadoraService, userName)
                 .comNFe()
                 .comTransportadora()
                 .comEmitente()

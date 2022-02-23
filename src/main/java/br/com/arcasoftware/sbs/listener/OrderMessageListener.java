@@ -38,9 +38,13 @@ public class OrderMessageListener {
 
             S3ObjectInputStream s3is = o.getObjectContent();
 
-            String originalFileName = message.toString().split("/")[2];
+            String[] pathComposition = s3FileName.split("/");
 
-            this.nfeProcessor.processNFe(s3is, originalFileName, true);
+            String originalFileName = pathComposition[2];
+
+            String userName = pathComposition[1].split(":")[1];
+
+            this.nfeProcessor.processNFe(s3is, originalFileName, userName);
 
             log.info("Processamento Finalizado");
 
