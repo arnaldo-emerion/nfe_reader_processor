@@ -25,7 +25,7 @@ public class TransportadoraService {
     }
 
     @Cacheable(value = "TransportadoraService_getByCnpj")
-    public Optional<Transportadora> getByCnpj(String cnpj) {
-        return this.transportadoraRepository.getByCnpj(cnpj);
+    public Optional<Transportadora> getByUserCreateAndCnpj(String userCreate, String cnpj) {
+        return this.transportadoraRepository.getByUserCreateAndCnpj(userCreate, cnpj);
     }
 }

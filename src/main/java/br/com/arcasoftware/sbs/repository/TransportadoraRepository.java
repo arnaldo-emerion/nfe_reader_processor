@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface TransportadoraRepository extends PagingAndSortingRepository<Transportadora, Long> {
 
-    Optional<Transportadora> getByCnpj(String cnpj);
+    Optional<Transportadora> getByUserCreateAndCnpj(String userCreate, String cnpj);
 }

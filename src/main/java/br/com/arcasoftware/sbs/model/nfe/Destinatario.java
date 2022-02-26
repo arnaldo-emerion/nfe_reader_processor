@@ -7,18 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "cnpj", "userCreate" }) })
 public class Destinatario extends BaseEntity implements FiltravelPorEmitente {
 
-    @Column(unique = true)
     private String cnpj;
     private String razaoSocial;
     private String ie;

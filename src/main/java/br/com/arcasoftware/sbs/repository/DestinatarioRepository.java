@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface DestinatarioRepository extends JpaRepository<Destinatario, Long> {
 
-    Optional<Destinatario> getByCnpj(String cnpj);
+    Optional<Destinatario> getByUserCreateAndCnpj(String userCreate, String cnpj);
 
-    Optional<Destinatario> getByEmitenteAndCnpj(Emitente emitente, String cnpj);
+    Optional<Destinatario> getByUserCreateAndEmitenteAndCnpj(String userCreate, Emitente emitente, String cnpj);
 
 }

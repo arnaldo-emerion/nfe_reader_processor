@@ -31,8 +31,8 @@ public class NFeService {
     }
 
     @Cacheable(value = "NFeService_getByChaveNFe")
-    public List<NFe> getByChaveNFe(String chaveNFe) {
-        return this.nFeRepository.findByChaveNFe(chaveNFe);
+    public List<NFe> findByUserCreateAndChaveNFe(String userCreate, String chaveNFe) {
+        return this.nFeRepository.findByUserCreateAndChaveNFe(userCreate, chaveNFe);
     }
 
 }

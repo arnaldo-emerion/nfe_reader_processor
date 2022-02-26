@@ -7,15 +7,17 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "cnpj", "userCreate" }) })
 public class Emitente extends BaseEntity {
 
-    @Column(unique = true)
     private String cnpj;
     private String razaoSocial;
     private String nomeFantasia;

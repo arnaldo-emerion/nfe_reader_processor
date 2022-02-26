@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "chaveNFe", "userCreate" }) })
 public class NFe extends BaseEntity implements FiltravelPorEmitente {
 
     private String cUF;
@@ -29,7 +30,7 @@ public class NFe extends BaseEntity implements FiltravelPorEmitente {
     private String tpNf;
     private String cMunFG;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String chaveNFe;
 
     @Column(length = 1024)

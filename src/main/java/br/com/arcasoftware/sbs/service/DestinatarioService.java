@@ -19,13 +19,13 @@ public class DestinatarioService {
     }
 
     @Cacheable(value = "DestService_getByCnpj")
-    public Optional<Destinatario> getByCnpj(String cnpj) {
-        return this.destRepository.getByCnpj(cnpj);
+    public Optional<Destinatario> getByUserCreateAndCnpj(String userCreate, String cnpj) {
+        return this.destRepository.getByUserCreateAndCnpj(userCreate, cnpj);
     }
 
     @Cacheable(value = "DestService_getByEmitenteAndCnpj")
-    public Optional<Destinatario> getByEmitenteAndCnpj(Emitente emitente, String cnpj) {
-        return this.destRepository.getByEmitenteAndCnpj(emitente, cnpj);
+    public Optional<Destinatario> getByUserCreateAndEmitenteAndCnpj(String userCreate, Emitente emitente, String cnpj) {
+        return this.destRepository.getByUserCreateAndEmitenteAndCnpj(userCreate, emitente, cnpj);
     }
 
     @CacheEvict(value = {"DestService_getAll", "DestService_getByCnpj", "DestService_getByEmitenteAndCnpj", "DestService_getById"}, allEntries = true)

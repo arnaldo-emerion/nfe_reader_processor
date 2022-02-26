@@ -100,7 +100,7 @@ public class NfeProcessor {
 
         String chNFe = (String) XMLUtils.getObject(document, xpath, "//protNFe/infProt/chNFe", XPathConstants.STRING);
 
-        List<NFe> byChNFe = this.nFeService.getByChaveNFe(chNFe);
+        List<NFe> byChNFe = this.nFeService.findByUserCreateAndChaveNFe(userName, chNFe);
 
         if (!byChNFe.isEmpty()) {
             this.nFeService.delete(byChNFe.get(0));

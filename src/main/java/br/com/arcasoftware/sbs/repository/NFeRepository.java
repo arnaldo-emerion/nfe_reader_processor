@@ -9,6 +9,6 @@ import java.util.List;
 @Repository
 public interface NFeRepository extends PagingAndSortingRepository<NFe, Long> {
 
-    List<NFe> findByChaveNFe(String chaveNFe);
+    List<NFe> findByUserCreateAndChaveNFe(String userCreate, String chaveNFe);
 
 }

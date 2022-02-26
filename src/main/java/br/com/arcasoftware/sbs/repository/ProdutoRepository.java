@@ -11,8 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ProdutoRepository extends PagingAndSortingRepository<Produto, Long> {
 
-    Optional<Produto> getByCodigo(String codigo);
+    Optional<Produto> getByUserCreateAndCodigo(String userCreate, String codigo);
 
-    List<Produto> getByEmitente(Emitente emitente);
+    List<Produto> getByUserCreateAndEmitente(String userEmitente, Emitente emitente);
 
 }

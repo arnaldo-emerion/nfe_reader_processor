@@ -35,7 +35,7 @@ public class NFeBuilder {
     private final String userName;
 
     private NFe nfe;
-    private List<Produto> allItemsForThisEmitente;
+    private List<Produto> allItemsForThisEmitenteAndUser;
 
     public NFeBuilder(Document document, XPath xpath, DestinatarioService destinatarioService, EmitenteService emitenteService, ProdutoService produtoService,
                       TransportadoraService transportadoraService, String userName) {
@@ -95,7 +95,7 @@ public class NFeBuilder {
 
         String cnpj = XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("CNPJ"));
 
-        Optional<Transportadora> transportadoraFromDB = this.transportadoraService.getByCnpj(cnpj);
+        Optional<Transportadora> transportadoraFromDB = this.transportadoraService.getByUserCreateAndCnpj(userName, cnpj);
 
         if (transportadoraFromDB.isPresent()) {
             this.nfe.setTransportadora(transportadoraFromDB.get());
@@ -114,7 +114,7 @@ public class NFeBuilder {
             try {
                 savedTransportadora = this.transportadoraService.save(transportadora);
             } catch (DataIntegrityViolationException ex) {
-                savedTransportadora = this.transportadoraService.getByCnpj(cnpj).orElseThrow(() -> new ValidationException(EnumException.TRANSPORTADORA_NOT_FOUND));
+                savedTransportadora = this.transportadoraService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.TRANSPORTADORA_NOT_FOUND));
             }
 
             this.nfe.setTransportadora(savedTransportadora);
@@ -129,7 +129,7 @@ public class NFeBuilder {
 
         String cnpj = XMLUtils.extractTextValue(xmlEmit.getElementsByTagName("CNPJ"));
 
-        Optional<Emitente> emitenteFromDB = this.emitenteService.getByCnpj(cnpj);
+        Optional<Emitente> emitenteFromDB = this.emitenteService.getByUserCreateAndCnpj(userName, cnpj);
 
         if (emitenteFromDB.isPresent()) {
             this.nfe.setEmitente(emitenteFromDB.get());
@@ -155,13 +155,13 @@ public class NFeBuilder {
             try {
                 savedemitente = this.emitenteService.save(emitente);
             } catch (DataIntegrityViolationException ex) {
-                savedemitente = this.emitenteService.getByCnpj(cnpj).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
+                savedemitente = this.emitenteService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
             }
 
             this.nfe.setEmitente(savedemitente);
         }
 
-        allItemsForThisEmitente = this.produtoService.getByEmitente(nfe.getEmitente());
+        allItemsForThisEmitenteAndUser = this.produtoService.getByUserCreateAndEmitente(userName, nfe.getEmitente());
 
         return this;
     }
@@ -176,7 +176,7 @@ public class NFeBuilder {
             cnpj = XMLUtils.extractTextValue(xmlDest.getElementsByTagName("CPF"));
         }
 
-        Optional<Destinatario> destinatarioFromDB = this.destinatarioService.getByEmitenteAndCnpj(this.nfe.getEmitente(), cnpj);
+        Optional<Destinatario> destinatarioFromDB = this.destinatarioService.getByUserCreateAndEmitenteAndCnpj(userName, this.nfe.getEmitente(), cnpj);
 
         if (destinatarioFromDB.isPresent()) {
             nfe.setDestinatario(destinatarioFromDB.get());
@@ -203,7 +203,7 @@ public class NFeBuilder {
             try {
                 savedDestinatario = this.destinatarioService.save(destinatario);
             } catch (DataIntegrityViolationException ex) {
-                savedDestinatario = this.destinatarioService.getByCnpj(cnpj).orElseThrow(() -> new ValidationException(EnumException.DESTINATARIO_NAO_ENCONTRADO));
+                savedDestinatario = this.destinatarioService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.DESTINATARIO_NAO_ENCONTRADO));
             }
 
             this.nfe.setDestinatario(savedDestinatario);
@@ -258,7 +258,7 @@ public class NFeBuilder {
 
                 String cProd = XMLUtils.extractTextValue(item.getElementsByTagName("cProd"));
 
-                Optional<Produto> produtoFromDB = this.allItemsForThisEmitente.stream().filter(p -> p.getCodigo().equals(cProd)).findAny();
+                Optional<Produto> produtoFromDB = this.allItemsForThisEmitenteAndUser.stream().filter(p -> p.getCodigo().equals(cProd)).findAny();
 
                 Produto p;
                 if (produtoFromDB.isPresent()) {
@@ -278,7 +278,7 @@ public class NFeBuilder {
                     try {
                         savedProduto = this.produtoService.save(produto);
                     } catch (DataIntegrityViolationException ex) {
-                        savedProduto = this.produtoService.getByCodigo(cProd).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
+                        savedProduto = this.produtoService.getByUserCreateAndCodigo(userName, cProd).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
                     }
 
                     p = savedProduto;

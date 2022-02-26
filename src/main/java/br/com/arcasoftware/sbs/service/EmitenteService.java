@@ -25,8 +25,8 @@ public class EmitenteService {
     }
 
     @Cacheable(value = "EmitenteService_getByCnpj")
-    public Optional<Emitente> getByCnpj(String cnpj) {
-        return this.emitenteRepository.getByCnpj(cnpj);
+    public Optional<Emitente> getByUserCreateAndCnpj(String userCreate, String cnpj) {
+        return this.emitenteRepository.getByUserCreateAndCnpj(userCreate, cnpj);
     }
 
 }

@@ -27,14 +27,14 @@ public class ProdutoService {
     }
 
     @Cacheable(value = "ProdutoService_getByCodigo")
-    public Optional<Produto> getByCodigo(String codigo) {
-        return this.produtoRepository.getByCodigo(codigo);
+    public Optional<Produto> getByUserCreateAndCodigo(String userCreate, String codigo) {
+        return this.produtoRepository.getByUserCreateAndCodigo(userCreate, codigo);
     }
 
 
     @Cacheable(value = "ProdutoService_getByEmitente")
-    public List<Produto> getByEmitente(Emitente emitente) {
-        return this.produtoRepository.getByEmitente(emitente);
+    public List<Produto> getByUserCreateAndEmitente(String userCreate, Emitente emitente) {
+        return this.produtoRepository.getByUserCreateAndEmitente(userCreate, emitente);
     }
 
 
