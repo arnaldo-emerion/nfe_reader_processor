@@ -36,6 +36,7 @@ public class OrderMessageListener {
     @SqsListener(value = QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
     public void processMessage(Object message) {
         String sequencer = null;
+        String userName = null;
         try {
             log.info("Received new SQS message: {}", message);
 
@@ -47,27 +48,31 @@ public class OrderMessageListener {
 
             S3Object o = s3.getObject(BUCKET_NAME, s3FileName);
 
-            sequencer = sqsMessage.getSequencer();
-
-            this.statusProcessamentoNFeService.markAsProcessing(sequencer);
-
-            S3ObjectInputStream s3is = o.getObjectContent();
-
             String[] pathComposition = s3FileName.split("/");
 
             String originalFileName = pathComposition[2];
 
-            String userName = pathComposition[1].split(":")[1];
+            userName = pathComposition[1].split(":")[1];
+
+            sequencer = sqsMessage.getSequencer();
+
+            this.statusProcessamentoNFeService.markAsProcessing(userName, sequencer);
+
+            S3ObjectInputStream s3is = o.getObjectContent();
 
             this.nfeProcessor.processNFe(s3is, originalFileName, userName);
 
-            this.statusProcessamentoNFeService.updateSucessoProcessamento(sequencer);
+            this.statusProcessamentoNFeService.updateSucessoProcessamento(userName, sequencer);
 
             log.info("Processamento Finalizado");
 
         } catch (Exception e) {
             if (null != sequencer) {
-                this.statusProcessamentoNFeService.updateErroProcessamento(sequencer, e.getMessage());
+                try{
+                    this.statusProcessamentoNFeService.updateErroProcessamento(userName, sequencer, e.getMessage());
+                } catch(Exception ex){
+
+                }
             }
             log.error("It was not possible to process this NFe because: " + e.getMessage());
         }
