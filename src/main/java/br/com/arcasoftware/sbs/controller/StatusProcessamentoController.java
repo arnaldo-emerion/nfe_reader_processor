@@ -19,8 +19,8 @@ public class StatusProcessamentoController {
         return "ok.";
     }
 
-    @GetMapping("processamento/{identityId}")
-    public int getQtdNFeEmProcessamento(@PathVariable("identityId") String identityId){
+    @GetMapping("processamento")
+    public int getQtdNFeEmProcessamento(@RequestParam("identityId") String identityId){
         return this.statusProcessamentoNFeService.getEmProcessamento(identityId);
     }
 }
