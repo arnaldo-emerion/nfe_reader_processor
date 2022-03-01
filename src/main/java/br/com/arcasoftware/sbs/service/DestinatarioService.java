@@ -28,10 +28,10 @@ public class DestinatarioService {
         return this.destRepository.getByUserCreateAndEmitenteAndCnpj(userCreate, emitente, cnpj);
     }
 
-    @CacheEvict(value = {"DestService_getAll", "DestService_getByCnpj", "DestService_getByEmitenteAndCnpj", "DestService_getById"}, allEntries = true)
+    @CacheEvict(value = {"DestService_getByCnpj", "DestService_getByEmitenteAndCnpj"}, allEntries = true)
     public Destinatario save(Destinatario obj) {
         return this.destRepository.saveAndFlush(obj);
     }
-    
+
 
 }

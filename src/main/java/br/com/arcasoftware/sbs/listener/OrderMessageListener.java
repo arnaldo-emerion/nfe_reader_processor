@@ -56,25 +56,24 @@ public class OrderMessageListener {
 
             sequencer = sqsMessage.getSequencer();
 
-            this.statusProcessamentoNFeService.markAsProcessing(userName, sequencer);
+            //this.statusProcessamentoNFeService.markAsProcessing(userName, sequencer);
 
             S3ObjectInputStream s3is = o.getObjectContent();
 
             this.nfeProcessor.processNFe(s3is, originalFileName, userName);
 
-            this.statusProcessamentoNFeService.updateSucessoProcessamento(userName, sequencer);
+            //this.statusProcessamentoNFeService.updateSucessoProcessamento(userName, sequencer);
 
             log.info("Processamento Finalizado");
 
         } catch (Exception e) {
-            if (null != sequencer) {
-                try{
-                    this.statusProcessamentoNFeService.updateErroProcessamento(userName, sequencer, e.getMessage());
-                } catch(Exception ex){
-
-                }
-            }
             log.error("It was not possible to process this NFe because: " + e.getMessage());
+        } finally {
+            try{
+                this.statusProcessamentoNFeService.deleteStatusProcessamento(userName, sequencer);
+            }catch (Exception e){
+                log.error("Erro ao tentar executar a ação: " + e.getMessage());
+            }
         }
     }
 }

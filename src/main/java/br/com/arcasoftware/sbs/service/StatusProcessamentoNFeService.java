@@ -3,6 +3,7 @@ package br.com.arcasoftware.sbs.service;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
@@ -59,7 +60,7 @@ public class StatusProcessamentoNFeService {
         updateStatusProcessamento(identityId, sequencer, "FAILURE", message);
     }
 
-    private void updateStatusProcessamento(String identityId, String sequencer, String status, String message) {
+    public void updateStatusProcessamento(String identityId, String sequencer, String status, String message) {
         Table table = dynamoDB.getTable(TABLE_NAME);
 
         UpdateItemSpec updateItemSpec = new UpdateItemSpec()
@@ -72,6 +73,15 @@ public class StatusProcessamentoNFeService {
                 .withReturnValues(ReturnValue.UPDATED_NEW);
 
         table.updateItem(updateItemSpec);
+    }
+
+    public void deleteStatusProcessamento(String identityId, String sequencer) {
+        Table table = dynamoDB.getTable(TABLE_NAME);
+
+        DeleteItemSpec deleteItemSpec = new DeleteItemSpec()
+                .withPrimaryKey("id", identityId, "sequencer", sequencer);
+
+        table.deleteItem(deleteItemSpec);
     }
 
 }
