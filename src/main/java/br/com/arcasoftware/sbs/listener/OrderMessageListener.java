@@ -69,11 +69,7 @@ public class OrderMessageListener {
         } catch (Exception e) {
             log.error("It was not possible to process this NFe because: " + e.getMessage());
         } finally {
-            try{
-                this.statusProcessamentoNFeService.deleteStatusProcessamento(userName, sequencer);
-            }catch (Exception e){
-                log.error("Erro ao tentar executar a ação: " + e.getMessage());
-            }
+            this.statusProcessamentoNFeService.deleteStatusProcessamento(userName, sequencer);
         }
     }
 }
