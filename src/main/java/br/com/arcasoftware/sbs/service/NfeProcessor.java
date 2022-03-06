@@ -60,6 +60,7 @@ public class NfeProcessor {
             throw ex;
         } finally {
             HistoricoProcessamento historicoProcessamento = new HistoricoProcessamento(fileName, Calendar.getInstance(), processadaCorretamente, motivo);
+            historicoProcessamento.setUserCreate(userName);
             this.historicoProcessamentoService.save(historicoProcessamento);
         }
     }
