@@ -9,6 +9,7 @@ import br.com.arcasoftware.sbs.service.ProdutoService;
 import br.com.arcasoftware.sbs.service.TransportadoraService;
 import br.com.arcasoftware.sbs.utils.XMLUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.util.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -256,6 +257,13 @@ public class NFeBuilder {
             for (int i = 0; i < nodeListItens.getLength(); i++) {
                 Element item = (Element) nodeListItens.item(i);
 
+                int nItem = 0;
+                String nItem1FromAttr = item.getAttribute("nItem");
+
+                if (StringUtils.hasText(nItem1FromAttr)) {
+                    nItem = Integer.parseInt(nItem1FromAttr);
+                }
+
                 String cProd = XMLUtils.extractTextValue(item.getElementsByTagName("cProd"));
 
                 Optional<Produto> produtoFromDB = this.allItemsForThisEmitenteAndUser.stream().filter(p -> p.getCodigo().equals(cProd)).findAny();
@@ -290,7 +298,8 @@ public class NFeBuilder {
                         XMLUtils.extractTextValue(item.getElementsByTagName("uTrib")),
                         XMLUtils.extractDoubleValue(item.getElementsByTagName("qTrib")),
                         XMLUtils.extractDoubleValue(item.getElementsByTagName("vUnTrib")),
-                        XMLUtils.extractDoubleValue(item.getElementsByTagName("vProd")));
+                        XMLUtils.extractDoubleValue(item.getElementsByTagName("vProd")),
+                        nItem);
                 nFeItem.setUserCreate(userName);
                 this.nfe.getNFeItemList().add(nFeItem);
             }

@@ -6,15 +6,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
+@Table(indexes = {
+        @Index(name = "nfe_item_user_create_index", columnList = "userCreate"),
+        @Index(name = "nfe_item_nitem", columnList = "nitem ASC")
+})
 public class NFeItem extends BaseEntity {
 
     @JsonIgnore
@@ -29,4 +31,5 @@ public class NFeItem extends BaseEntity {
     private double quantidade;
     private double valorUnitario;
     private double valorTotal;
+    private int nItem;
 }
