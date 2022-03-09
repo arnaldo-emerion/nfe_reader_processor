@@ -15,7 +15,7 @@ import javax.persistence.*;
 @Entity
 @Table(indexes = {
         @Index(name = "nfe_item_user_create_index", columnList = "userCreate"),
-        @Index(name = "nfe_item_nitem", columnList = "nitem ASC")
+        @Index(name = "nfe_item_nitem", columnList = "nItem ASC")
 })
 public class NFeItem extends BaseEntity {
 
@@ -31,5 +31,5 @@ public class NFeItem extends BaseEntity {
     private double quantidade;
     private double valorUnitario;
     private double valorTotal;
-    private int nItem;
+    private Integer nItem;
 }
