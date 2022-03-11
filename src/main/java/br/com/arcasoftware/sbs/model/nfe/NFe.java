@@ -17,7 +17,13 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "chaveNFe", "userCreate" }) })
+@Table(indexes = {
+        @Index(name = "nfe_user_create_index", columnList = "userCreate"),
+        @Index(name = "nfe_destinatario_index", columnList = "destinatario_id"),
+        @Index(name = "nfe_data_emissao_index", columnList = "dataEmissao"),
+        @Index(name = "nfe_natureza_operacao_index", columnList = "natOperacao"),
+},
+        uniqueConstraints = { @UniqueConstraint(columnNames = { "chaveNFe", "userCreate" }) })
 public class NFe extends BaseEntity implements FiltravelPorEmitente {
 
     private String cUF;
