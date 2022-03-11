@@ -17,7 +17,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 
@@ -34,7 +33,6 @@ public class NFeBuilder {
     private final ErroProcessamentoService erroProcessamentoService;
 
     private NFe nfe;
-    private List<Produto> allItemsForThisEmitenteAndUser;
 
     public NFeBuilder(Document document, XPath xpath, DestinatarioService destinatarioService, EmitenteService emitenteService, ProdutoService produtoService,
                       TransportadoraService transportadoraService, String userName, ErroProcessamentoService erroProcessamentoService) {
@@ -162,8 +160,6 @@ public class NFeBuilder {
 
             this.nfe.setEmitente(savedemitente);
         }
-
-        allItemsForThisEmitenteAndUser = this.produtoService.getByUserCreateAndEmitente(userName, nfe.getEmitente());
 
         return this;
     }

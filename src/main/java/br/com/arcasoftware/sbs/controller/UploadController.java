@@ -6,7 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
@@ -23,7 +26,7 @@ public class UploadController {
         this.producer = producer;
     }
 
-    public ResponseEntity processarNFe(@RequestParam("file") MultipartFile file, @RequestParam("reprocessarNF") String reprocessarNF) {
+    public ResponseEntity processarNFe(@RequestParam("file") MultipartFile file) {
         Map<String, Object> headers = new HashMap<>();
         headers.put("Message-Type", MessageType.ORDER.name());
         headers.put("Content-Type", MediaType.APPLICATION_JSON_VALUE);
