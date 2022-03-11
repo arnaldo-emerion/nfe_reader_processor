@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import java.util.Calendar;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,8 +15,10 @@ import javax.persistence.Entity;
 @Entity
 public class ErroProcessamento extends BaseEntity {
     private String motivo;
+    private Calendar dataProcessamento;
 
     public ErroProcessamento(String userCreate, String motivo){
+        this.setDataProcessamento(Calendar.getInstance());
         this.setUserCreate(userCreate);
         this.setMotivo(motivo);
     }

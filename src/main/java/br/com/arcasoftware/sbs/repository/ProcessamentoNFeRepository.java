@@ -12,7 +12,7 @@ public interface ProcessamentoNFeRepository extends PagingAndSortingRepository<P
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "update processamentonfe set status = 'FINALIZADO' where user_create = :identityId and file_name = :fileName")
+            value = "update processamentonfe set status = 'FINALIZADO', data_finalizacao = current_timestamp where user_create = :identityId and file_name = :fileName")
     void finalizeProcessamento(String identityId, String fileName);
 
     @Query(nativeQuery = true,
