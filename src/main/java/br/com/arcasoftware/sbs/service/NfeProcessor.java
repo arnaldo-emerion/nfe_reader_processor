@@ -5,7 +5,6 @@ import br.com.arcasoftware.sbs.enums.EnumException;
 import br.com.arcasoftware.sbs.exception.ValidationException;
 import br.com.arcasoftware.sbs.model.HistoricoProcessamento;
 import br.com.arcasoftware.sbs.model.nfe.NFe;
-import br.com.arcasoftware.sbs.utils.NFeUtils;
 import br.com.arcasoftware.sbs.utils.XMLUtils;
 import org.glassfish.jersey.internal.util.SimpleNamespaceResolver;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -33,15 +32,18 @@ public class NfeProcessor {
     private final TransportadoraService transportadoraService;
     private final NFeService nFeService;
     private final HistoricoProcessamentoService historicoProcessamentoService;
+    private final ErroProcessamentoService erroProcessamentoService;
 
     public NfeProcessor(DestinatarioService destinatarioService, EmitenteService emitenteService, ProdutoService produtoService,
-                        TransportadoraService transportadoraService, NFeService nFeService, HistoricoProcessamentoService historicoProcessamentoService) {
+                        TransportadoraService transportadoraService, NFeService nFeService, HistoricoProcessamentoService historicoProcessamentoService,
+                        ErroProcessamentoService erroProcessamentoService) {
         this.destinatarioService = destinatarioService;
         this.emitenteService = emitenteService;
         this.produtoService = produtoService;
         this.transportadoraService = transportadoraService;
         this.nFeService = nFeService;
         this.historicoProcessamentoService = historicoProcessamentoService;
+        this.erroProcessamentoService = erroProcessamentoService;
     }
 
     public void processNFe(InputStream file, String fileName, String userName) {
@@ -90,11 +92,6 @@ public class NfeProcessor {
 
         Object protocoloNode = XMLUtils.getObject(document, xpath, "//protNFe", XPathConstants.NODE);
 
-        if (!NFeUtils.isValidTypeNfe(document, xpath)) {
-            String tipo = (String) XMLUtils.getObject(document, xpath, "//natOp", XPathConstants.STRING);
-            throw new ValidationException("Nota fiscal ainda não suportada para processamento: " + tipo);
-        }
-
         if (null == protocoloNode) {
             throw new ValidationException(EnumException.NFE_WITHOUT_PROTOCOL);
         }
@@ -107,7 +104,7 @@ public class NfeProcessor {
             this.nFeService.delete(byChNFe.get(0));
         }
 
-        return new NFeBuilder(document, xpath, destinatarioService, emitenteService, produtoService, transportadoraService, userName)
+        return new NFeBuilder(document, xpath, destinatarioService, emitenteService, produtoService, transportadoraService, userName, erroProcessamentoService)
                 .comNFe()
                 .comTransportadora()
                 .comEmitente()

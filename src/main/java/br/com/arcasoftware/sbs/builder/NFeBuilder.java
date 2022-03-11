@@ -3,10 +3,7 @@ package br.com.arcasoftware.sbs.builder;
 import br.com.arcasoftware.sbs.enums.EnumException;
 import br.com.arcasoftware.sbs.exception.ValidationException;
 import br.com.arcasoftware.sbs.model.nfe.*;
-import br.com.arcasoftware.sbs.service.DestinatarioService;
-import br.com.arcasoftware.sbs.service.EmitenteService;
-import br.com.arcasoftware.sbs.service.ProdutoService;
-import br.com.arcasoftware.sbs.service.TransportadoraService;
+import br.com.arcasoftware.sbs.service.*;
 import br.com.arcasoftware.sbs.utils.XMLUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.StringUtils;
@@ -34,12 +31,13 @@ public class NFeBuilder {
     private final ProdutoService produtoService;
     private final TransportadoraService transportadoraService;
     private final String userName;
+    private final ErroProcessamentoService erroProcessamentoService;
 
     private NFe nfe;
     private List<Produto> allItemsForThisEmitenteAndUser;
 
     public NFeBuilder(Document document, XPath xpath, DestinatarioService destinatarioService, EmitenteService emitenteService, ProdutoService produtoService,
-                      TransportadoraService transportadoraService, String userName) {
+                      TransportadoraService transportadoraService, String userName, ErroProcessamentoService erroProcessamentoService) {
         this.document = document;
         this.xpath = xpath;
         this.destinatarioService = destinatarioService;
@@ -47,6 +45,7 @@ public class NFeBuilder {
         this.produtoService = produtoService;
         this.transportadoraService = transportadoraService;
         this.userName = userName;
+        this.erroProcessamentoService = erroProcessamentoService;
     }
 
     public NFeBuilder comNFe() {
@@ -115,6 +114,7 @@ public class NFeBuilder {
             try {
                 savedTransportadora = this.transportadoraService.save(transportadora);
             } catch (DataIntegrityViolationException ex) {
+                this.erroProcessamentoService.save(new ErroProcessamento(userName, "Transportadora: " + ex.getMessage()));
                 savedTransportadora = this.transportadoraService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.TRANSPORTADORA_NOT_FOUND));
             }
 
@@ -156,6 +156,7 @@ public class NFeBuilder {
             try {
                 savedemitente = this.emitenteService.save(emitente);
             } catch (DataIntegrityViolationException ex) {
+                this.erroProcessamentoService.save(new ErroProcessamento(userName, "Emitente: " + ex.getMessage()));
                 savedemitente = this.emitenteService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
             }
 
@@ -204,6 +205,7 @@ public class NFeBuilder {
             try {
                 savedDestinatario = this.destinatarioService.save(destinatario);
             } catch (DataIntegrityViolationException ex) {
+                this.erroProcessamentoService.save(new ErroProcessamento(userName, "Destinatario: " + ex.getMessage()));
                 savedDestinatario = this.destinatarioService.getByUserCreateAndCnpj(userName, cnpj).orElseThrow(() -> new ValidationException(EnumException.DESTINATARIO_NAO_ENCONTRADO));
             }
 
@@ -266,7 +268,7 @@ public class NFeBuilder {
 
                 String cProd = XMLUtils.extractTextValue(item.getElementsByTagName("cProd"));
 
-                Optional<Produto> produtoFromDB = this.allItemsForThisEmitenteAndUser.stream().filter(p -> p.getCodigo().equals(cProd)).findAny();
+                Optional<Produto> produtoFromDB = this.produtoService.getByUserCreateAndCodigo(userName, cProd);
 
                 Produto p;
                 if (produtoFromDB.isPresent()) {
@@ -286,6 +288,7 @@ public class NFeBuilder {
                     try {
                         savedProduto = this.produtoService.save(produto);
                     } catch (DataIntegrityViolationException ex) {
+                        this.erroProcessamentoService.save(new ErroProcessamento(userName, "Produto: " + ex.getMessage()));
                         savedProduto = this.produtoService.getByUserCreateAndCodigo(userName, cProd).orElseThrow(() -> new ValidationException(EnumException.EMITENTE_NOT_FOUND));
                     }
 

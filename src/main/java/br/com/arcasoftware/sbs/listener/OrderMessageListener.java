@@ -1,7 +1,9 @@
 package br.com.arcasoftware.sbs.listener;
 
+import br.com.arcasoftware.sbs.model.nfe.ErroProcessamento;
+import br.com.arcasoftware.sbs.service.ErroProcessamentoService;
 import br.com.arcasoftware.sbs.service.NfeProcessor;
-import br.com.arcasoftware.sbs.service.StatusProcessamentoNFeService;
+import br.com.arcasoftware.sbs.service.ProcessamentoNFeService;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
@@ -26,16 +28,18 @@ public class OrderMessageListener {
     private static final String REGION = "us-east-1";
     private static final String QUEUE_NAME = "https://sqs.us-east-1.amazonaws.com/492510987777/nfeReaderQueue";
     private final NfeProcessor nfeProcessor;
-    private final StatusProcessamentoNFeService statusProcessamentoNFeService;
+    private final ProcessamentoNFeService processamentoNFeService;
+    private final ErroProcessamentoService erroProcessamentoService;
 
-    public OrderMessageListener(NfeProcessor nfeProcessor, StatusProcessamentoNFeService statusProcessamentoNFeService) {
+    public OrderMessageListener(NfeProcessor nfeProcessor, ProcessamentoNFeService processamentoNFeService, ErroProcessamentoService erroProcessamentoService) {
         this.nfeProcessor = nfeProcessor;
-        this.statusProcessamentoNFeService = statusProcessamentoNFeService;
+        this.processamentoNFeService = processamentoNFeService;
+        this.erroProcessamentoService = erroProcessamentoService;
     }
 
     @SqsListener(value = QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
     public void processMessage(Object message) {
-        String sequencer = null;
+        String fileName = null;
         String userName = null;
         try {
             log.info("Received new SQS message: {}", message);
@@ -50,26 +54,25 @@ public class OrderMessageListener {
 
             String[] pathComposition = s3FileName.split("/");
 
-            String originalFileName = pathComposition[2];
+            fileName = pathComposition[2];
 
             userName = pathComposition[1].split(":")[1];
 
-            sequencer = sqsMessage.getSequencer();
-
-            //this.statusProcessamentoNFeService.markAsProcessing(userName, sequencer);
-
             S3ObjectInputStream s3is = o.getObjectContent();
 
-            this.nfeProcessor.processNFe(s3is, originalFileName, userName);
-
-            //this.statusProcessamentoNFeService.updateSucessoProcessamento(userName, sequencer);
+            this.nfeProcessor.processNFe(s3is, fileName, userName);
 
             log.info("Processamento Finalizado");
 
         } catch (Exception e) {
             log.error("It was not possible to process this NFe because: " + e.getMessage());
+            this.erroProcessamentoService.save(new ErroProcessamento(userName, "Erro ao processar: " + e.getMessage()));
         } finally {
-            this.statusProcessamentoNFeService.deleteStatusProcessamento(userName, sequencer);
+            try {
+                this.processamentoNFeService.finalizeProcessamento(userName, fileName);
+            } catch (Exception ex) {
+                this.erroProcessamentoService.save(new ErroProcessamento(userName, "Erro ao alterar Status: " + ex.getMessage()));
+            }
         }
     }
 }
@@ -78,7 +81,7 @@ public class OrderMessageListener {
 @NoArgsConstructor
 @Getter
 @Setter
-class SQSMessage{
+class SQSMessage {
     private String fileName;
     private String sequencer;
 }
