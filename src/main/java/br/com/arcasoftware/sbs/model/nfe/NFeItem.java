@@ -32,4 +32,16 @@ public class NFeItem extends BaseEntity {
     private double valorUnitario;
     private double valorTotal;
     private Integer nItem;
+
+    @OneToOne(mappedBy = "nFeItem", cascade = CascadeType.ALL)
+    private NFeICMS nFeICMS;
+
+    @OneToOne(mappedBy = "nFeItem", cascade = CascadeType.ALL)
+    private NFeIPI nFeIPI;
+
+    @OneToOne(mappedBy = "nFeItem", cascade = CascadeType.ALL)
+    private NFePIS nFePIS;
+
+    @OneToOne(mappedBy = "nFeItem", cascade = CascadeType.ALL)
+    private NFeCOFINS nFeCOFINS;
 }

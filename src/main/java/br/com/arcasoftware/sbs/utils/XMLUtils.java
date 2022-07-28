@@ -23,6 +23,11 @@ public class XMLUtils {
         }
     }
 
+    public static int extractIntegerValue(NodeList aList) {
+        String textValue = extractTextValue(aList, null);
+        return null == textValue ? 0 : Integer.parseInt(textValue);
+    }
+
     public static double extractDoubleValue(NodeList aList) {
         String textValue = extractTextValue(aList, null);
         return null == textValue ? 0 : Double.parseDouble(textValue);

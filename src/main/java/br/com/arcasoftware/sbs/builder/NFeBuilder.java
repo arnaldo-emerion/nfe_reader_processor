@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Optional;
 
+import static br.com.arcasoftware.sbs.utils.XMLUtils.extractDoubleValue;
+import static br.com.arcasoftware.sbs.utils.XMLUtils.extractIntegerValue;
+import static br.com.arcasoftware.sbs.utils.XMLUtils.extractTextValue;
+
 
 public class NFeBuilder {
 
@@ -49,8 +53,8 @@ public class NFeBuilder {
     public NFeBuilder comNFe() {
         Element xmlIDE = (Element) XMLUtils.getObject(document, xpath, "//infNFe/ide", XPathConstants.NODE);
 
-        String dhEmi = XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("dhEmi"));
-        String dEmi = XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("dEmi"));
+        String dhEmi = extractTextValue(xmlIDE.getElementsByTagName("dhEmi"));
+        String dEmi = extractTextValue(xmlIDE.getElementsByTagName("dEmi"));
         String dataEmissaoString = dhEmi != null ? dhEmi : dEmi;
         String formato = dataEmissaoString.contains("T") ? "yyyy-MM-dd'T'HH:mm:ssX" : "yyyy-MM-dd";
         Date dataEmissao;
@@ -64,13 +68,13 @@ public class NFeBuilder {
         String chaveNotaFiscal = (String) XMLUtils.getObject(document, xpath, "//protNFe/infProt/chNFe", XPathConstants.STRING);
 
         this.nfe = new NFe(
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("cUF")),
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("cNF")),
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("natOp")),
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("nNF")),
+                extractTextValue(xmlIDE.getElementsByTagName("cUF")),
+                extractTextValue(xmlIDE.getElementsByTagName("cNF")),
+                extractTextValue(xmlIDE.getElementsByTagName("natOp")),
+                extractTextValue(xmlIDE.getElementsByTagName("nNF")),
                 dataEmissao,
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("tpNF")),
-                XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("cMunFG")),
+                extractTextValue(xmlIDE.getElementsByTagName("tpNF")),
+                extractTextValue(xmlIDE.getElementsByTagName("cMunFG")),
                 chaveNotaFiscal,
                 infAdicional,
                 null,
@@ -91,7 +95,7 @@ public class NFeBuilder {
             return this;
         }
 
-        String cnpj = XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("CNPJ"));
+        String cnpj = extractTextValue(xmlIDE.getElementsByTagName("CNPJ"));
 
         Optional<Transportadora> transportadoraFromDB = this.transportadoraService.getByUserCreateAndCnpj(userName, cnpj);
 
@@ -100,11 +104,11 @@ public class NFeBuilder {
         } else {
             Transportadora transportadora = new Transportadora(
                     cnpj,
-                    XMLUtils.extractTextValue(xmlIDE.getElementsByTagName(X_NOME)),
-                    XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("IE")),
-                    XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("UF")),
-                    XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("xMun")),
-                    XMLUtils.extractTextValue(xmlIDE.getElementsByTagName("xEnder"))
+                    extractTextValue(xmlIDE.getElementsByTagName(X_NOME)),
+                    extractTextValue(xmlIDE.getElementsByTagName("IE")),
+                    extractTextValue(xmlIDE.getElementsByTagName("UF")),
+                    extractTextValue(xmlIDE.getElementsByTagName("xMun")),
+                    extractTextValue(xmlIDE.getElementsByTagName("xEnder"))
             );
 
             transportadora.setUserCreate(userName);
@@ -126,7 +130,7 @@ public class NFeBuilder {
         Element xmlEmit = (Element) XMLUtils.getObject(document, xpath, "//infNFe/emit", XPathConstants.NODE);
         Element enderEmit = (Element) XMLUtils.getObject(document, xpath, "//infNFe/emit/enderEmit", XPathConstants.NODE);
 
-        String cnpj = XMLUtils.extractTextValue(xmlEmit.getElementsByTagName("CNPJ"));
+        String cnpj = extractTextValue(xmlEmit.getElementsByTagName("CNPJ"));
 
         Optional<Emitente> emitenteFromDB = this.emitenteService.getByUserCreateAndCnpj(userName, cnpj);
 
@@ -135,18 +139,18 @@ public class NFeBuilder {
         } else {
             Emitente emitente = new Emitente(
                     cnpj,
-                    XMLUtils.extractTextValue(xmlEmit.getElementsByTagName(X_NOME)),
-                    XMLUtils.extractTextValue(xmlEmit.getElementsByTagName("xFant")),
-                    XMLUtils.extractTextValue(xmlEmit.getElementsByTagName("IE")),
-                    XMLUtils.extractTextValue(xmlEmit.getElementsByTagName("CRT")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("UF")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("xMun")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("xBairro")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("fone")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("xLgr")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("cPais")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("xPais")),
-                    XMLUtils.extractTextValue(enderEmit.getElementsByTagName("CEP"))
+                    extractTextValue(xmlEmit.getElementsByTagName(X_NOME)),
+                    extractTextValue(xmlEmit.getElementsByTagName("xFant")),
+                    extractTextValue(xmlEmit.getElementsByTagName("IE")),
+                    extractTextValue(xmlEmit.getElementsByTagName("CRT")),
+                    extractTextValue(enderEmit.getElementsByTagName("UF")),
+                    extractTextValue(enderEmit.getElementsByTagName("xMun")),
+                    extractTextValue(enderEmit.getElementsByTagName("xBairro")),
+                    extractTextValue(enderEmit.getElementsByTagName("fone")),
+                    extractTextValue(enderEmit.getElementsByTagName("xLgr")),
+                    extractTextValue(enderEmit.getElementsByTagName("cPais")),
+                    extractTextValue(enderEmit.getElementsByTagName("xPais")),
+                    extractTextValue(enderEmit.getElementsByTagName("CEP"))
             );
 
             Emitente savedemitente;
@@ -168,10 +172,10 @@ public class NFeBuilder {
         Element xmlDest = (Element) XMLUtils.getObject(document, xpath, "//infNFe/dest", XPathConstants.NODE);
         Element enderDest = (Element) XMLUtils.getObject(document, xpath, "//infNFe/dest/enderDest", XPathConstants.NODE);
 
-        String cnpj = XMLUtils.extractTextValue(xmlDest.getElementsByTagName("CNPJ"));
+        String cnpj = extractTextValue(xmlDest.getElementsByTagName("CNPJ"));
 
         if (null == cnpj) {
-            cnpj = XMLUtils.extractTextValue(xmlDest.getElementsByTagName("CPF"));
+            cnpj = extractTextValue(xmlDest.getElementsByTagName("CPF"));
         }
 
         Optional<Destinatario> destinatarioFromDB = this.destinatarioService.getByUserCreateAndEmitenteAndCnpj(userName, this.nfe.getEmitente(), cnpj);
@@ -181,18 +185,18 @@ public class NFeBuilder {
         } else {
             Destinatario destinatario = new Destinatario(
                     cnpj,
-                    XMLUtils.extractTextValue(xmlDest.getElementsByTagName(X_NOME)),
-                    XMLUtils.extractTextValue(xmlDest.getElementsByTagName("IE")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("UF")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("xMun")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("xBairro")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("fone")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("CEP")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("xLgr")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("nro")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("cPais")),
-                    XMLUtils.extractTextValue(enderDest.getElementsByTagName("xPais")),
-                    XMLUtils.extractTextValue(xmlDest.getElementsByTagName("indIEDest")),
+                    extractTextValue(xmlDest.getElementsByTagName(X_NOME)),
+                    extractTextValue(xmlDest.getElementsByTagName("IE")),
+                    extractTextValue(enderDest.getElementsByTagName("UF")),
+                    extractTextValue(enderDest.getElementsByTagName("xMun")),
+                    extractTextValue(enderDest.getElementsByTagName("xBairro")),
+                    extractTextValue(enderDest.getElementsByTagName("fone")),
+                    extractTextValue(enderDest.getElementsByTagName("CEP")),
+                    extractTextValue(enderDest.getElementsByTagName("xLgr")),
+                    extractTextValue(enderDest.getElementsByTagName("nro")),
+                    extractTextValue(enderDest.getElementsByTagName("cPais")),
+                    extractTextValue(enderDest.getElementsByTagName("xPais")),
+                    extractTextValue(xmlDest.getElementsByTagName("indIEDest")),
                     this.nfe.getEmitente()
             );
 
@@ -216,28 +220,28 @@ public class NFeBuilder {
 
         NFeTotalICMS nFeTotalICMS = new NFeTotalICMS(
                 this.nfe,
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vBC")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vICMS")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vBCST")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vST")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vProd")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vFrete")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vSeg")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vDesc")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vII")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vIPI")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vPIS")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vCOFINS")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vOutro")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vNF")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vICMSDeson")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vFCP")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vICMSUFDest")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vICMSUFRemet")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vFCPSTRet")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("pFCPSTRet")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vIPIDevol")),
-                XMLUtils.extractDoubleValue(xmlEmit.getElementsByTagName("vTotTrib"))
+                extractDoubleValue(xmlEmit.getElementsByTagName("vBC")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vICMS")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vBCST")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vST")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vProd")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vFrete")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vSeg")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vDesc")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vII")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vIPI")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vPIS")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vCOFINS")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vOutro")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vNF")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vICMSDeson")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vFCP")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vICMSUFDest")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vICMSUFRemet")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vFCPSTRet")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("pFCPSTRet")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vIPIDevol")),
+                extractDoubleValue(xmlEmit.getElementsByTagName("vTotTrib"))
 
         );
 
@@ -262,7 +266,7 @@ public class NFeBuilder {
                     nItem = Integer.parseInt(nItem1FromAttr);
                 }
 
-                String cProd = XMLUtils.extractTextValue(item.getElementsByTagName("cProd"));
+                String cProd = extractTextValue(item.getElementsByTagName("cProd"));
 
                 Optional<Produto> produtoFromDB = this.produtoService.getByUserCreateAndCodigo(userName, cProd);
 
@@ -272,10 +276,10 @@ public class NFeBuilder {
                 } else {
                     Produto produto = new Produto(
                             cProd,
-                            XMLUtils.extractTextValue(item.getElementsByTagName("cEAN")),
-                            XMLUtils.extractTextValue(item.getElementsByTagName("xProd")),
-                            XMLUtils.extractTextValue(item.getElementsByTagName("NCM")),
-                            XMLUtils.extractTextValue(item.getElementsByTagName("uCom")),
+                            extractTextValue(item.getElementsByTagName("cEAN")),
+                            extractTextValue(item.getElementsByTagName("xProd")),
+                            extractTextValue(item.getElementsByTagName("NCM")),
+                            extractTextValue(item.getElementsByTagName("uCom")),
                             this.nfe.getEmitente()
                     );
 
@@ -291,19 +295,81 @@ public class NFeBuilder {
                     p = savedProduto;
                 }
 
+                Element tagImposto = (Element) item.getElementsByTagName("imposto").item(0).getChildNodes();
+                NFeICMS nFeICMS = extractICMSForItem(null, tagImposto);
+                NFeIPI nFeIPI = extractIPIForItem(null, tagImposto);
+                NFePIS nFePIS = extractPISForItem(null, tagImposto);
+                NFeCOFINS nFeCOFINS = extractCOFINSForItem(null, tagImposto);
+
                 NFeItem nFeItem = new NFeItem(this.nfe,
                         p,
-                        XMLUtils.extractTextValue(item.getElementsByTagName("CFOP")),
-                        XMLUtils.extractTextValue(item.getElementsByTagName("uTrib")),
-                        XMLUtils.extractDoubleValue(item.getElementsByTagName("qTrib")),
-                        XMLUtils.extractDoubleValue(item.getElementsByTagName("vUnTrib")),
-                        XMLUtils.extractDoubleValue(item.getElementsByTagName("vProd")),
-                        nItem);
-                nFeItem.setUserCreate(userName);
+                        extractTextValue(item.getElementsByTagName("CFOP")),
+                        extractTextValue(item.getElementsByTagName("uTrib")),
+                        extractDoubleValue(item.getElementsByTagName("qTrib")),
+                        extractDoubleValue(item.getElementsByTagName("vUnTrib")),
+                        extractDoubleValue(item.getElementsByTagName("vProd")),
+                        nItem,
+                        nFeICMS,
+                        nFeIPI,
+                        nFePIS,
+                        nFeCOFINS);
+                nFeICMS.setNFeItem(nFeItem);
+                nFeIPI.setNFeItem(nFeItem);
+                nFePIS.setNFeItem(nFeItem);
+                nFeCOFINS.setNFeItem(nFeItem);
+
                 this.nfe.getNFeItemList().add(nFeItem);
             }
         }
         return this;
+    }
+
+    private NFeICMS extractICMSForItem(NFeItem nFeItem, Element tagImposto) {
+        Element nodeICMS = (Element) tagImposto.getElementsByTagName("ICMS").item(0);
+        int orig = extractIntegerValue(nodeICMS.getElementsByTagName("orig"));
+        String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
+        int modBC = extractIntegerValue(nodeICMS.getElementsByTagName("modBC"));
+        double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
+        double pICMS = extractDoubleValue(nodeICMS.getElementsByTagName("pICMS"));
+        double vICMS = extractDoubleValue(nodeICMS.getElementsByTagName("vICMS"));
+        double modBCST = extractDoubleValue(nodeICMS.getElementsByTagName("modBCST"));
+        double pMVAST = extractDoubleValue(nodeICMS.getElementsByTagName("pMVAST"));
+        double vBCST = extractDoubleValue(nodeICMS.getElementsByTagName("vBCST"));
+        double pICMSST = extractDoubleValue(nodeICMS.getElementsByTagName("pICMSST"));
+        double vICMSST = extractDoubleValue(nodeICMS.getElementsByTagName("vICMSST"));
+
+        return new NFeICMS(nFeItem, orig, cst, modBC, vBC, pICMS, vICMS, modBCST, pMVAST, vBCST, pICMSST, vICMSST);
+    }
+
+    private NFeIPI extractIPIForItem(NFeItem nFeItem, Element tagImposto) {
+        Element nodeICMS = (Element) tagImposto.getElementsByTagName("IPI").item(0);
+        int cEnq = extractIntegerValue(nodeICMS.getElementsByTagName("cEnq"));
+        String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
+        double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
+        double pIPI = extractDoubleValue(nodeICMS.getElementsByTagName("pIPI"));
+        double vIPI = extractDoubleValue(nodeICMS.getElementsByTagName("vIPI"));
+
+        return new NFeIPI(nFeItem, cEnq, cst, vBC, pIPI, vIPI);
+    }
+
+    private NFePIS extractPISForItem(NFeItem nFeItem, Element tagImposto) {
+        Element nodeICMS = (Element) tagImposto.getElementsByTagName("PIS").item(0);
+        String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
+        double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
+        double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pPIS"));
+        double vPIS = extractDoubleValue(nodeICMS.getElementsByTagName("vPIS"));
+
+        return new NFePIS(nFeItem, cst, vBC, pPIS, vPIS);
+    }
+
+    private NFeCOFINS extractCOFINSForItem(NFeItem nFeIteme, Element tagImposto) {
+        Element nodeICMS = (Element) tagImposto.getElementsByTagName("COFINS").item(0);
+        String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
+        double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
+        double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pCOFINS"));
+        double vPIS = extractDoubleValue(nodeICMS.getElementsByTagName("vCOFINS"));
+
+        return new NFeCOFINS(nFeIteme, cst, vBC, pPIS, vPIS);
     }
 
     public NFe build() {
