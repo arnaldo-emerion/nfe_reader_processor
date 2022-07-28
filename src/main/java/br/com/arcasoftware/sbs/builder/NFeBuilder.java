@@ -2,8 +2,23 @@ package br.com.arcasoftware.sbs.builder;
 
 import br.com.arcasoftware.sbs.enums.EnumException;
 import br.com.arcasoftware.sbs.exception.ValidationException;
-import br.com.arcasoftware.sbs.model.nfe.*;
-import br.com.arcasoftware.sbs.service.*;
+import br.com.arcasoftware.sbs.model.nfe.Destinatario;
+import br.com.arcasoftware.sbs.model.nfe.Emitente;
+import br.com.arcasoftware.sbs.model.nfe.ErroProcessamento;
+import br.com.arcasoftware.sbs.model.nfe.NFe;
+import br.com.arcasoftware.sbs.model.nfe.NFeCOFINS;
+import br.com.arcasoftware.sbs.model.nfe.NFeICMS;
+import br.com.arcasoftware.sbs.model.nfe.NFeIPI;
+import br.com.arcasoftware.sbs.model.nfe.NFeItem;
+import br.com.arcasoftware.sbs.model.nfe.NFePIS;
+import br.com.arcasoftware.sbs.model.nfe.NFeTotalICMS;
+import br.com.arcasoftware.sbs.model.nfe.Produto;
+import br.com.arcasoftware.sbs.model.nfe.Transportadora;
+import br.com.arcasoftware.sbs.service.DestinatarioService;
+import br.com.arcasoftware.sbs.service.EmitenteService;
+import br.com.arcasoftware.sbs.service.ErroProcessamentoService;
+import br.com.arcasoftware.sbs.service.ProdutoService;
+import br.com.arcasoftware.sbs.service.TransportadoraService;
 import br.com.arcasoftware.sbs.utils.XMLUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.util.StringUtils;
@@ -296,10 +311,10 @@ public class NFeBuilder {
                 }
 
                 Element tagImposto = (Element) item.getElementsByTagName("imposto").item(0).getChildNodes();
-                NFeICMS nFeICMS = extractICMSForItem(null, tagImposto);
-                NFeIPI nFeIPI = extractIPIForItem(null, tagImposto);
-                NFePIS nFePIS = extractPISForItem(null, tagImposto);
-                NFeCOFINS nFeCOFINS = extractCOFINSForItem(null, tagImposto);
+                NFeICMS nFeICMS = extractICMSForItem(null, tagImposto, userName);
+                NFeIPI nFeIPI = extractIPIForItem(null, tagImposto, userName);
+                NFePIS nFePIS = extractPISForItem(null, tagImposto, userName);
+                NFeCOFINS nFeCOFINS = extractCOFINSForItem(null, tagImposto, userName);
 
                 NFeItem nFeItem = new NFeItem(this.nfe,
                         p,
@@ -313,6 +328,7 @@ public class NFeBuilder {
                         nFeIPI,
                         nFePIS,
                         nFeCOFINS);
+                nFeItem.setUserCreate(userName);
                 nFeICMS.setNFeItem(nFeItem);
                 nFeIPI.setNFeItem(nFeItem);
                 nFePIS.setNFeItem(nFeItem);
@@ -324,7 +340,7 @@ public class NFeBuilder {
         return this;
     }
 
-    private NFeICMS extractICMSForItem(NFeItem nFeItem, Element tagImposto) {
+    private NFeICMS extractICMSForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("ICMS").item(0);
         int orig = extractIntegerValue(nodeICMS.getElementsByTagName("orig"));
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
@@ -338,10 +354,12 @@ public class NFeBuilder {
         double pICMSST = extractDoubleValue(nodeICMS.getElementsByTagName("pICMSST"));
         double vICMSST = extractDoubleValue(nodeICMS.getElementsByTagName("vICMSST"));
 
-        return new NFeICMS(nFeItem, orig, cst, modBC, vBC, pICMS, vICMS, modBCST, pMVAST, vBCST, pICMSST, vICMSST);
+        NFeICMS nFeICMS = new NFeICMS(nFeItem, orig, cst, modBC, vBC, pICMS, vICMS, modBCST, pMVAST, vBCST, pICMSST, vICMSST);
+        nFeICMS.setUserCreate(userName);
+        return nFeICMS;
     }
 
-    private NFeIPI extractIPIForItem(NFeItem nFeItem, Element tagImposto) {
+    private NFeIPI extractIPIForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("IPI").item(0);
         int cEnq = extractIntegerValue(nodeICMS.getElementsByTagName("cEnq"));
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
@@ -349,27 +367,33 @@ public class NFeBuilder {
         double pIPI = extractDoubleValue(nodeICMS.getElementsByTagName("pIPI"));
         double vIPI = extractDoubleValue(nodeICMS.getElementsByTagName("vIPI"));
 
-        return new NFeIPI(nFeItem, cEnq, cst, vBC, pIPI, vIPI);
+        NFeIPI nFeIPI = new NFeIPI(nFeItem, cEnq, cst, vBC, pIPI, vIPI);
+        nFeIPI.setUserCreate(userName);
+        return nFeIPI;
     }
 
-    private NFePIS extractPISForItem(NFeItem nFeItem, Element tagImposto) {
+    private NFePIS extractPISForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("PIS").item(0);
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
         double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pPIS"));
         double vPIS = extractDoubleValue(nodeICMS.getElementsByTagName("vPIS"));
 
-        return new NFePIS(nFeItem, cst, vBC, pPIS, vPIS);
+        NFePIS nFePIS = new NFePIS(nFeItem, cst, vBC, pPIS, vPIS);
+        nFePIS.setUserCreate(userName);
+        return nFePIS;
     }
 
-    private NFeCOFINS extractCOFINSForItem(NFeItem nFeIteme, Element tagImposto) {
+    private NFeCOFINS extractCOFINSForItem(NFeItem nFeIteme, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("COFINS").item(0);
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
         double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pCOFINS"));
         double vPIS = extractDoubleValue(nodeICMS.getElementsByTagName("vCOFINS"));
 
-        return new NFeCOFINS(nFeIteme, cst, vBC, pPIS, vPIS);
+        NFeCOFINS nFeCOFINS = new NFeCOFINS(nFeIteme, cst, vBC, pPIS, vPIS);
+        nFeCOFINS.setUserCreate(userName);
+        return nFeCOFINS;
     }
 
     public NFe build() {
