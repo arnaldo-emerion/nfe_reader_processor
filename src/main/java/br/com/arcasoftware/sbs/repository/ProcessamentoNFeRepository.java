@@ -12,10 +12,10 @@ public interface ProcessamentoNFeRepository extends PagingAndSortingRepository<P
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "update processamentonfe set status = 'FINALIZADO', data_finalizacao = current_timestamp where user_create = :identityId and file_name = :fileName")
+            value = "update nfe_reader.processamentonfe set status = 'FINALIZADO', data_finalizacao = current_timestamp where user_create = :identityId and file_name = :fileName")
     void finalizeProcessamento(String identityId, String fileName);
 
     @Query(nativeQuery = true,
-            value = "select count(1) from processamentonfe where user_create = :identityId and status = 'RECEBIDO'")
+            value = "select count(1) from nfe_reader.processamentonfe where user_create = :identityId and status = 'RECEBIDO'")
     int getEmProcessamento(@Param("identityId") String identityId);
 }
