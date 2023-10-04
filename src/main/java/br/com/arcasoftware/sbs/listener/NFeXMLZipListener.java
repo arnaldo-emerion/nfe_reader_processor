@@ -1,15 +1,12 @@
 package br.com.arcasoftware.sbs.listener;
 
+import br.com.arcasoftware.sbs.model.dto.SQSMessageDTO;
 import br.com.arcasoftware.sbs.model.nfe.ProcessamentoNFe;
 import br.com.arcasoftware.sbs.service.ProcessamentoNFeService;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
@@ -97,7 +94,7 @@ public class NFeXMLZipListener {
                     throw new IOException("Failed to create directory " + parent);
                 }
 
-                try(FileOutputStream fos = new FileOutputStream(newFile)) {
+                try (FileOutputStream fos = new FileOutputStream(newFile)) {
                     int len;
                     while ((len = zis.read(buffer)) > 0) {
                         fos.write(buffer, 0, len);
@@ -139,13 +136,4 @@ public class NFeXMLZipListener {
 
         return destFile;
     }
-}
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-class SQSMessageDTO {
-    private String fileName;
-    private String sequencer;
 }

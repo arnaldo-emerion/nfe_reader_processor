@@ -16,13 +16,7 @@ public class ValidationException extends RuntimeException {
 
     private final HttpStatus httpStatus;
     private final String description;
-
-    public ValidationException(String descricao) {
-        super(descricao);
-        this.description = descricao;
-        this.httpStatus = HttpStatus.BAD_REQUEST;
-    }
-
+    
     public ValidationException(EnumException exceptionEnum) {
         super(exceptionEnum.getDescription());
 

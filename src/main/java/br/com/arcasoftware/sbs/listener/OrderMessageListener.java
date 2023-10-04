@@ -1,5 +1,6 @@
 package br.com.arcasoftware.sbs.listener;
 
+import br.com.arcasoftware.sbs.model.dto.SQSMessageDTO;
 import br.com.arcasoftware.sbs.model.nfe.ErroProcessamento;
 import br.com.arcasoftware.sbs.service.ErroProcessamentoService;
 import br.com.arcasoftware.sbs.service.NfeProcessor;
@@ -9,10 +10,6 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.aws.messaging.listener.SqsMessageDeletionPolicy;
 import org.springframework.cloud.aws.messaging.listener.annotation.SqsListener;
@@ -46,9 +43,9 @@ public class OrderMessageListener {
 
             final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(REGION).build();
 
-            SQSMessage sqsMessage = new Gson().fromJson(message.toString(), SQSMessage.class);
+            SQSMessageDTO sqsMessageDTO = new Gson().fromJson(message.toString(), SQSMessageDTO.class);
 
-            String s3FileName = java.net.URLDecoder.decode(sqsMessage.getFileName(), StandardCharsets.UTF_8.name());
+            String s3FileName = java.net.URLDecoder.decode(sqsMessageDTO.getFileName(), StandardCharsets.UTF_8.name());
 
             S3Object o = s3.getObject(BUCKET_NAME, s3FileName);
 
@@ -77,11 +74,3 @@ public class OrderMessageListener {
     }
 }
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-class SQSMessage {
-    private String fileName;
-    private String sequencer;
-}

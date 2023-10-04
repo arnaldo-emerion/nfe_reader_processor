@@ -15,9 +15,9 @@ public class XMLUtils {
         // hiding public constructor
     }
 
-    public static Object getObject(Document document, XPath xpath, String expression, QName tipo) {
+    public static Object getObject(Document document, XPath xpath, String expression, QName type) {
         try {
-            return xpath.compile(expression).evaluate(document, tipo);
+            return xpath.compile(expression).evaluate(document, type);
         } catch (XPathExpressionException e) {
             throw new ValidationException(EnumException.INVALID_XML_PASSED_IN);
         }
