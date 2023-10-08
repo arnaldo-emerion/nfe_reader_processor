@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Primary;
 @EnableSqs
 public class AwsSQSConfiguration {
 
-    @Value("${cloud.aws.region:us-east-1}")
+    @Value("${aws.config.region:us-east-1}")
     private String awsRegion;
 
 

@@ -1,5 +1,6 @@
 package br.com.arcasoftware.sbs.listener;
 
+import br.com.arcasoftware.sbs.config.AwsConfigProperties;
 import br.com.arcasoftware.sbs.model.dto.SQSMessageDTO;
 import br.com.arcasoftware.sbs.model.nfe.ErroProcessamento;
 import br.com.arcasoftware.sbs.service.ErroProcessamentoService;
@@ -19,35 +20,34 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
-public class OrderMessageListener {
+public class NfeXmlListener {
 
-    private static final String BUCKET_NAME = "nfereader232856-dev";
-    private static final String REGION = "us-east-1";
-    private static final String QUEUE_NAME = "https://sqs.us-east-1.amazonaws.com/492510987777/nfeReaderQueue";
     private final NfeProcessor nfeProcessor;
     private final ProcessamentoNFeService processamentoNFeService;
     private final ErroProcessamentoService erroProcessamentoService;
+    private final AwsConfigProperties awsConfig;
 
-    public OrderMessageListener(NfeProcessor nfeProcessor, ProcessamentoNFeService processamentoNFeService, ErroProcessamentoService erroProcessamentoService) {
+    public NfeXmlListener(NfeProcessor nfeProcessor, ProcessamentoNFeService processamentoNFeService, ErroProcessamentoService erroProcessamentoService, AwsConfigProperties awsConfig) {
         this.nfeProcessor = nfeProcessor;
         this.processamentoNFeService = processamentoNFeService;
         this.erroProcessamentoService = erroProcessamentoService;
+        this.awsConfig = awsConfig;
     }
 
-    @SqsListener(value = QUEUE_NAME, deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+    @SqsListener(value = "${aws.config.sqsXml}", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
     public void processMessage(Object message) {
         String fileName = null;
         String userName = null;
         try {
             log.info("Received new SQS message: {}", message);
 
-            final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(REGION).build();
+            final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(awsConfig.getRegion()).build();
 
             SQSMessageDTO sqsMessageDTO = new Gson().fromJson(message.toString(), SQSMessageDTO.class);
 
             String s3FileName = java.net.URLDecoder.decode(sqsMessageDTO.getFileName(), StandardCharsets.UTF_8.name());
 
-            S3Object o = s3.getObject(BUCKET_NAME, s3FileName);
+            S3Object o = s3.getObject(awsConfig.getBucketName(), s3FileName);
 
             String[] pathComposition = s3FileName.split("/");
 

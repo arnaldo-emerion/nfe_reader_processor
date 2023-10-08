@@ -19,10 +19,10 @@ spring:
       time: HH:mm:ss
   #Datasource
   datasource:
-    url: deveSerPassadoViaVMOptions
-    username: deveSerPassadoViaVMOptions
-    password: deveSerPassadoViaVMOptions
     driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate.ddl-auto: update
@@ -33,10 +33,3 @@ spring:
         format_sql: true
         type: trace
         default_schema: nfe_reader
-
-aws:
-  config:
-    region: us-east-1
-    bucketName: nfe-reader-xml190442-nfereader
-    sqsXml: nfeReaderQueue
-    sqsZip: nfeReaderQueueZip
