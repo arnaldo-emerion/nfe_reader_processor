@@ -329,10 +329,19 @@ public class NFeBuilder {
                         nFePIS,
                         nFeCOFINS);
                 nFeItem.setUserCreate(userName);
-                nFeICMS.setNFeItem(nFeItem);
-                nFeIPI.setNFeItem(nFeItem);
-                nFePIS.setNFeItem(nFeItem);
-                nFeCOFINS.setNFeItem(nFeItem);
+
+                if (null != nFeICMS) {
+                    nFeICMS.setNFeItem(nFeItem);
+                }
+                if (null != nFeIPI) {
+                    nFeIPI.setNFeItem(nFeItem);
+                }
+                if (null != nFePIS) {
+                    nFePIS.setNFeItem(nFeItem);
+                }
+                if (null != nFeCOFINS) {
+                    nFeCOFINS.setNFeItem(nFeItem);
+                }
 
                 this.nfe.getNFeItemList().add(nFeItem);
             }
@@ -342,6 +351,7 @@ public class NFeBuilder {
 
     private NFeICMS extractICMSForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("ICMS").item(0);
+        if (null == nodeICMS) return null;
         int orig = extractIntegerValue(nodeICMS.getElementsByTagName("orig"));
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         int modBC = extractIntegerValue(nodeICMS.getElementsByTagName("modBC"));
@@ -361,6 +371,7 @@ public class NFeBuilder {
 
     private NFeIPI extractIPIForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("IPI").item(0);
+        if (null == nodeICMS) return null;
         int cEnq = extractIntegerValue(nodeICMS.getElementsByTagName("cEnq"));
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
@@ -374,6 +385,7 @@ public class NFeBuilder {
 
     private NFePIS extractPISForItem(NFeItem nFeItem, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("PIS").item(0);
+        if (null == nodeICMS) return null;
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
         double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pPIS"));
@@ -386,6 +398,7 @@ public class NFeBuilder {
 
     private NFeCOFINS extractCOFINSForItem(NFeItem nFeIteme, Element tagImposto, String userName) {
         Element nodeICMS = (Element) tagImposto.getElementsByTagName("COFINS").item(0);
+        if (null == nodeICMS) return null;
         String cst = extractTextValue(nodeICMS.getElementsByTagName("CST"));
         double vBC = extractDoubleValue(nodeICMS.getElementsByTagName("vBC"));
         double pPIS = extractDoubleValue(nodeICMS.getElementsByTagName("pCOFINS"));
