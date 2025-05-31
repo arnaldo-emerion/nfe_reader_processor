@@ -1,5 +1,3 @@
-package java.br.com.arcasoftware.sbs.builder;
-
 import br.com.arcasoftware.sbs.builder.NFeBuilder;
 import br.com.arcasoftware.sbs.enums.EnumException;
 import br.com.arcasoftware.sbs.exception.ValidationException;
@@ -29,7 +27,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;

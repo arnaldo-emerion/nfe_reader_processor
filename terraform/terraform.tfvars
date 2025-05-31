@@ -1,0 +1,5 @@
+region      = "us-east-1"
+app_name    = "my-java-app"
+env_name    = "my-java-env"
+bucket_name = "eb-test-bucket-random"
+xml_bucket_name = "nfe-reader-xml190442-nfereader"
