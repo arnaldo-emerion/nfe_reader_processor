@@ -30,7 +30,7 @@ public class CFeEmitenteService {
 
     @Cacheable(value = "CFeEmitenteService_getByCnpj")
     public Optional<CFeEmitente> getByUserCreateAndCnpj(String userCreate, String cnpj) {
-        Optional<CFeEmitenteModel> cFeEmitenteModel = this.cFeEmitenteRepository.getByUserCreateAndCnpj(userCreate, cnpj);
+        Optional<CFeEmitenteModel> cFeEmitenteModel = this.cFeEmitenteRepository.getFirstByUserCreateAndCnpj(userCreate, cnpj);
         return cFeEmitenteModel.map(CFeEmitenteMapper::toDomain);
     }
 

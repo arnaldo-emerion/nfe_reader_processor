@@ -4,8 +4,8 @@
 SECRET_NAME="nfe-reader-processor"
 PROFILE="aws-arnaldo"     # Change if needed
 REGION="us-east-1"             # Change if needed
-ENV_NAME="my-java-env"       # Your EB environment
-APP_NAME="my-java-app"       # Your EB application name
+ENV_NAME="nfe-reader-processor-env"       # Your EB environment
+APP_NAME="nfe-reader-processor-app"       # Your EB application name
 TMP_JSON="env-vars.json"
 # =============================
 

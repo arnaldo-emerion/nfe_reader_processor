@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface CFeEmitenteRepository extends PagingAndSortingRepository<CFeEmitenteModel, Long> {
 
-    Optional<CFeEmitenteModel> getByUserCreateAndCnpj(String userCreate, String cnpj);
+    Optional<CFeEmitenteModel> getFirstByUserCreateAndCnpj(String userCreate, String cnpj);
 }

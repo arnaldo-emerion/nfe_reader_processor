@@ -3,11 +3,11 @@
 set -e
 
 # ───── CONFIGURE THESE VARIABLES ──────────────────────────
-APP_NAME="my-java-app"
-ENV_NAME="my-java-env"
+APP_NAME="nfe-reader-processor-app"
+ENV_NAME="nfe-reader-processor-env"
 REGION="us-east-1"
 PROFILE="aws-arnaldo"                 # AWS CLI named profile
-BUCKET_NAME="eb-test-bucket-random"  # Must already exist & be in correct region
+BUCKET_NAME="nfe-reader-processor-bucket"  # Must already exist & be in correct region
 JAR_NAME="nfereader-processor-application-1.0.0.jar"
 ZIP_FILE="nfereader-app-$(date +%Y%m%d%H%M%S).zip"
 # ──────────────────────────────────────────────────────────

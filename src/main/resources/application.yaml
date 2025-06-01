@@ -19,9 +19,9 @@ spring:
       time: HH:mm:ss
   #Datasource
   datasource:
-    url: deveSerPassadoViaVMOptions
-    username: deveSerPassadoViaVMOptions
-    password: deveSerPassadoViaVMOptions
+    url: jdbc:postgresql://${DATABASE_HOST}/${DATABASE_NAME}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
     driverClassName: org.postgresql.Driver
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
